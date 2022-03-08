@@ -1,0 +1,37 @@
+Forward: https://github.com/oneapi-src/oneTBB/pull/789
+Index: tbb/test/tbb/test_collaborative_call_once.cpp
+===================================================================
+--- tbb.orig/test/tbb/test_collaborative_call_once.cpp
++++ tbb/test/tbb/test_collaborative_call_once.cpp
+@@ -213,11 +213,14 @@ TEST_CASE("only calls once - move only a
+ TEST_CASE("only calls once - stress test") {
+ #if TBB_TEST_LOW_WORKLOAD
+     constexpr std::size_t N = 32;
+-#elif __TBB_x86_32 || __aarch32__  || __ANDROID__
++#elif __TBB_x86_32 || __arm__ || __ANDROID__
+     // Some C++ implementations allocate 8MB stacks for std::thread on 32 bit platforms
+     // that makes impossible to create more than ~500 threads.
+     // Android has been added to decrease testing time.
+     constexpr std::size_t N = tbb::detail::d0::max_nfs_size * 2;
++#elif defined(__ILP32__) && defined(__x86_64__)
++	// This is for x32 port https://wiki.debian.org/X32Port
++    constexpr std::size_t N = tbb::detail::d0::max_nfs_size * 2;
+ #else 
+     constexpr std::size_t N = tbb::detail::d0::max_nfs_size * 4;
+ #endif
+@@ -284,11 +287,14 @@ TEST_CASE("handles exceptions - state re
+ TEST_CASE("handles exceptions - stress test") {
+ #if TBB_TEST_LOW_WORKLOAD
+     constexpr std::size_t N = 32;
+-#elif __TBB_x86_32 || __aarch32__ || __ANDROID__
++#elif __TBB_x86_32 || __arm__ || __ANDROID__
+     // Some C++ implementations allocate 8MB stacks for std::thread on 32 bit platforms
+     // that makes impossible to create more than ~500 threads.
+     // Android has been added to decrease testing time.
+     constexpr std::size_t N = tbb::detail::d0::max_nfs_size * 2;
++#elif defined(__ILP32__) && defined(__x86_64__)
++	// This is for x32 port https://wiki.debian.org/X32Port
++    constexpr std::size_t N = tbb::detail::d0::max_nfs_size * 2;
+ #else 
+     constexpr std::size_t N = tbb::detail::d0::max_nfs_size * 4;
+ #endif

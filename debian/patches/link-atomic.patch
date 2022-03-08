@@ -1,0 +1,13 @@
+Index: tbb/test/CMakeLists.txt
+===================================================================
+--- tbb.orig/test/CMakeLists.txt
++++ tbb/test/CMakeLists.txt
+@@ -75,7 +75,7 @@ function(tbb_add_test)
+         $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:__TBB_DYNAMIC_LOAD_ENABLED=0>
+         $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:__TBB_SOURCE_DIRECTLY_INCLUDED=1>)
+ 
+-    target_link_libraries(${_tbb_test_TARGET_NAME} PRIVATE ${_tbb_test_DEPENDENCIES} Threads::Threads ${TBB_COMMON_LINK_LIBS})
++    target_link_libraries(${_tbb_test_TARGET_NAME} PRIVATE ${_tbb_test_DEPENDENCIES} Threads::Threads ${TBB_COMMON_LINK_LIBS} $ENV{DEB_ATOMIC})
+ 
+     if (COMMAND _tbb_run_memcheck)
+         _tbb_run_memcheck(${_tbb_test_NAME})

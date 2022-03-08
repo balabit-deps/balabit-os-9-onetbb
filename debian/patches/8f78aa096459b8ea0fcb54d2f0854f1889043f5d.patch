@@ -1,0 +1,32 @@
+From 8f78aa096459b8ea0fcb54d2f0854f1889043f5d Mon Sep 17 00:00:00 2001
+From: Vladislav Shchapov <phprus@gmail.com>
+Date: Thu, 23 Dec 2021 17:39:11 +0500
+Subject: [PATCH] Fix issue #687 (test_eh_thread)
+
+Signed-off-by: Vladislav Shchapov <phprus@gmail.com>
+---
+ test/tbb/test_eh_thread.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/test/tbb/test_eh_thread.cpp b/test/tbb/test_eh_thread.cpp
+index aa6d764d0..af291f483 100644
+--- a/test/tbb/test_eh_thread.cpp
++++ b/test/tbb/test_eh_thread.cpp
+@@ -36,6 +36,7 @@
+ // TODO: enable limitThreads with sanitizer under docker
+ #if TBB_USE_EXCEPTIONS && !_WIN32 && !__ANDROID__
+ 
++#include <limits.h>
+ #include <sys/types.h>
+ #include <sys/time.h>
+ #include <sys/resource.h>
+@@ -73,7 +74,8 @@ class Thread {
+         mValid = false;
+         pthread_attr_t attr;
+         // Limit the stack size not to consume all virtual memory on 32 bit platforms.
+-        if (pthread_attr_init(&attr) == 0 && pthread_attr_setstacksize(&attr, 100*1024) == 0) {
++        std::size_t stacksize = utils::max(128*1024, PTHREAD_STACK_MIN);
++        if (pthread_attr_init(&attr) == 0 && pthread_attr_setstacksize(&attr, stacksize) == 0) {
+             mValid = pthread_create(&mHandle, &attr, thread_routine, /* arg = */ nullptr) == 0;
+         }
+     }
